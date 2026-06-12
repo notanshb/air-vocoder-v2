@@ -26,31 +26,31 @@ An interactive, real-time audio synthesizer controlled by hand gestures and modu
 
 ```mermaid
 graph TD
-    subgraph Host Process
-        Orchestrator[gesture_vocoder/orchestrator.py]
-        SharedMemory[Shared Memory: SharedVocoderState Struct]
+    subgraph Host ["Host Process"]
+        Orchestrator["orchestrator.py"]
+        SharedMemory["Shared Memory (SharedVocoderState Struct)"]
     end
     
-    subgraph Vision Process
-        Camera[Webcam Capture] --> OpenCV[Frame Preprocessing]
-        OpenCV --> MediaPipe[MediaPipe Landmark Detection]
-        MediaPipe --> Classifier[Custom Finger State Classifier]
-        Classifier --> Smoother[Gesture Smoother]
-        Smoother --> WriteSHM[Write to Shared Memory]
+    subgraph VP ["Vision Process"]
+        Camera["Webcam Capture"] --> OpenCV["Frame Preprocessing"]
+        OpenCV --> MediaPipe["MediaPipe Landmark Detection"]
+        MediaPipe --> Classifier["Custom Finger State Classifier"]
+        Classifier --> Smoother["Gesture Smoother"]
+        Smoother --> WriteSHM["Write to Shared Memory"]
     end
     
-    subgraph Audio Process
-        ReadSHM[Read from Shared Memory] --> Synth[Polyphonic Sawtooth Synth]
-        Mic[Microphone Input] --> Envelope[Amplitude Envelope Tracker]
-        Synth & Envelope --> Modulator[Ring Modulation Vocoder]
-        Modulator --> Effects[Pedalboard Chorus & Reverb]
-        Effects --> Speakers[Audio Output]
+    subgraph AP ["Audio Process"]
+        ReadSHM["Read from Shared Memory"] --> Synth["Polyphonic Sawtooth Synth"]
+        Mic["Microphone Input"] --> Envelope["Amplitude Envelope Tracker"]
+        Synth & Envelope --> Modulator["Ring Modulation Vocoder"]
+        Modulator --> Effects["Pedalboard Chorus & Reverb"]
+        Effects --> Speakers["Audio Output"]
     end
 
-    Orchestrator -. Spawn & Monitor .-> Vision Process
-    Orchestrator -. Spawn & Monitor .-> Audio Process
-    WriteSHM -. Lock-free Write .-> SharedMemory
-    SharedMemory -. Lock-free Read .-> ReadSHM
+    Orchestrator -. "Spawn & Monitor" .-> Camera
+    Orchestrator -. "Spawn & Monitor" .-> ReadSHM
+    WriteSHM -. "Lock-free Write" .-> SharedMemory
+    SharedMemory -. "Lock-free Read" .-> ReadSHM
 ```
 
 ---
