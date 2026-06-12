@@ -7,8 +7,6 @@
 
 An interactive, real-time audio synthesizer controlled by hand gestures and modulated by vocal inputs. By mapping web-camera hand landmarks to synthesizer chord parameters, you can play music in the air while using your voice to shape the synth's envelope.
 
-![Air Vocoder Banner](assets/banner.png)
-
 ---
 
 ## ⚡ Key Features
